@@ -205,3 +205,18 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# ===== Project-specific =====
+# Model weights (too large for git)
+*.pt
+*.onnx
+weights/
+
+# Dataset (too large for git)
+data/
+
+# Training runs
+runs/
+
+# Streamlit cache
+.streamlit/
