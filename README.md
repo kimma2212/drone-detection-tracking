@@ -6,6 +6,11 @@ YOLOv8 기반 드론 탐지 → ByteTrack 영상 추적 → 야간/악천후 강
 
 ---
 
+## Acknowledgments
+- AI assistant (Claude) was used for code review, debugging, and documentation throughout the project.
+
+---
+
 ## Project Overview
 
 | Phase | Task | Method | Status |
