@@ -132,11 +132,6 @@ pip install -r requirements.txt
 
 ---
 
-## Background
-
-컴퓨터공학 전공 (Iowa State University) + 대한민국 육군 레이더 운용병 경험을 바탕으로, 방위산업 안티드론 AI 분야를 목표로 진행 중인 프로젝트입니다.
-
----
 
 ## License
 
