@@ -77,6 +77,76 @@ Small object detection 향상을 위해 SAHI를 적용해 실험했으나, DUT A
 
 ---
 
+
+
+## Phase 2: ByteTrack Video Tracking
+
+### Overview
+Phase 1의 YOLOv8 탐지 모델을 활용하여, 영상에서 프레임 간 드론을 추적합니다. 각 드론에 고유 ID를 부여하고 이동 궤적을 시각화합니다.
+
+### Method
+- **Tracker**: ByteTrack (Ultralytics 내장)
+- **Input**: Anti-UAV-Tracking 데이터셋 (프레임 이미지 시퀀스)
+- **Pipeline**: YOLOv8 Detection (per-frame) → ByteTrack ID Association → Trajectory Visualization
+
+### ByteTrack Custom Configuration
+Occlusion(가림 현상) 대응을 위해 기본 설정에서 파라미터를 튜닝했습니다.
+
+| Parameter | Default | Custom | 목적 |
+|-----------|---------|--------|------|
+| track_buffer | 30 | 150 | 가림 후 재등장 시 ID 유지 (5초) |
+| new_track_thresh | 0.3 | 0.6 | 새 ID 부여 기준 상향 |
+
+### Tracking Evaluation (MOTMetrics)
+
+| Metric | video01 (Occlusion) | video10 (Clear) |
+|--------|-------------------|-----------------|
+| **MOTA** (추적 정확도) | 85.5% | 83.9% |
+| **IDF1** (ID 일관성) | 63.0% | 91.3% |
+| **ID Switches** | 2 | 0 |
+| Misses (미탐지) | 144 / 1050 | 417 / 2635 |
+| False Positives | 6 | 6 |
+
+### Analysis
+- **Clear sky 환경 (video10)**: IDF1 91.3%로 높은 ID 일관성. 2635프레임 동안 ID Switch 0회 달성
+- **Occlusion 환경 (video01)**: 나무에 의한 가림 발생 시 ID 일관성이 63%로 하락. 드론이 장애물 뒤로 지나갈 때 탐지가 끊기며 새로운 ID가 부여됨
+- **한계점**: 카메라 단독으로는 Occlusion 해결에 한계 → 실제 안티드론 시스템에서 레이더 + 카메라 **멀티센서 융합**이 필요한 이유
+```
+
+**3. Project Structure에 파일 3개 추가:**
+
+`train.py` 아래에:
+```
+│   ├── track.py              # ByteTrack 영상 추적
+│   ├── eval_tracking.py      # 추적 정확도 평가 (MOTMetrics)
+```
+
+`dataset.yaml` 아래에:
+```
+│   └── bytetrack_custom.yaml # ByteTrack 커스텀 설정
+```
+
+**4. Tech Stack에 추가:**
+```
+- **Tracking**: ByteTrack
+- **Evaluation**: MOTMetrics (MOTA, IDF1)
+
+
+
+### Tracking Demo
+<p align="center">
+  <img src="results/tracking_demo.gif" width="45%">
+  <img src="results/tracking_demo_clear.gif" width="45%">
+</p>
+<p align="center">
+  <em>Left: Occlusion 환경 (video01) | Right: Clear sky 환경 (video10)</em>
+</p>
+
+
+---
+
+
+
 ## Demo
 
 Streamlit 기반 웹 데모 — 이미지 업로드 → 드론 탐지 → 바운딩 박스 시각화

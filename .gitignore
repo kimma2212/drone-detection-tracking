@@ -220,3 +220,6 @@ runs/
 
 # Streamlit cache
 .streamlit/
+
+# Video files (too large for GitHub)
+*.mp4
